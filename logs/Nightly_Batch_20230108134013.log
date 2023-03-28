@@ -1,0 +1,171 @@
+2023-01-08 13:40:13.682658: Nightly Batch Started
+2023-01-08 13:40:13.682658: Starting the Extraction Process
+2023-01-08 13:40:13.896922: query executed: 
+                    SELECT * FROM RETAIL_DWH.SOURCE.COUNTRY
+            
+2023-01-08 13:40:13.896922: Loading to Store 2023-01-08 13:40:13.896922
+2023-01-08 13:40:14.145466: query executed: TRUNCATE TABLE RETAIL_DWH.TEMP.TMP_COUNTRY
+2023-01-08 13:40:14.145466: Successfully truncated TEMP.TMP_COUNTRY
+2023-01-08 13:40:14.594390: query executed: INSERT INTO RETAIL_DWH.TEMP.TMP_COUNTRY(
+                    CNTRY_ID, 
+                    CNTRY_DESC
+                ) SELECT
+                    ID,
+                    COUNTRY_DESC
+                    FROM RETAIL_DWH.STAGE.STG_COUNTRY; 
+2023-01-08 13:40:14.595931: Successfully loaded to temp table COUNTRY
+2023-01-08 13:40:15.085953: query executed:  UPDATE RETAIL_DWH.TARGET.D_RETAIL_CNTRY_T AS T1
+                                SET T1.CNTRY_DESC = T2.CNTRY_DESC , 
+                                ROW_UPDT_TMS = LOCALTIMESTAMP 
+                                FROM RETAIL_DWH.TEMP.TMP_COUNTRY AS T2
+                                WHERE T1.CNTRY_ID = T2.CNTRY_ID;
+        
+2023-01-08 13:40:15.085953: Successfully loaded to target table D_RETAIL_CNTRY_T
+2023-01-08 13:40:15.481969: query executed: INSERT INTO RETAIL_DWH.TARGET.D_RETAIL_CNTRY_T(
+                CNTRY_ID,
+                CNTRY_DESC,
+                OPEN_CLOSE_CD,
+                ROW_INSRT_TMS,
+                ROW_UPDT_TMS
+            ) SELECT 
+                CNTRY_ID,
+                CNTRY_DESC,
+                1,
+                LOCALTIMESTAMP,
+                LOCALTIMESTAMP 
+            FROM RETAIL_DWH.TEMP.TMP_COUNTRY
+            WHERE CNTRY_ID NOT IN (SELECT DISTINCT CNTRY_ID from RETAIL_DWH.TARGET.D_RETAIL_CNTRY_T )
+2023-01-08 13:40:15.482996: Successfully loaded to target table D_RETAIL_CNTRY_T
+2023-01-08 13:40:15.730235: query executed: TRUNCATE TABLE RETAIL_DWH.TEMP.TMP_REGION
+2023-01-08 13:40:15.730235: Successfully truncated TEMP.TMP_REGION
+2023-01-08 13:40:16.370737: query executed: INSERT INTO RETAIL_DWH.TEMP.TMP_REGION(
+                    RGN_ID,
+                    CNTRY_KY,
+                    RGN_DESC
+                ) SELECT 
+                    ID,
+                    CNTRY.CNTRY_KY,
+                    REGION_DESC FROM RETAIL_DWH.STAGE.STG_REGION REGN
+                    LEFT OUTER JOIN RETAIL_DWH.TARGET.D_RETAIL_CNTRY_T CNTRY
+                     ON REGN.COUNTRY_ID = CNTRY.CNTRY_ID ;
+2023-01-08 13:40:16.370737: Successfully loaded to temp table REGION
+2023-01-08 13:40:16.873250: query executed:  UPDATE RETAIL_DWH.TARGET.D_RETAIL_RGN_T AS T1
+                                SET T1.RGN_DESC = T2.RGN_DESC , 
+                                ROW_UPDT_TMS = LOCALTIMESTAMP 
+                                FROM RETAIL_DWH.TEMP.TMP_REGION AS T2
+                                WHERE T1.RGN_ID = T2.RGN_ID;
+        
+2023-01-08 13:40:16.873250: Successfully loaded to target table D_RETAIL_RGN_T
+2023-01-08 13:40:17.282910: query executed: INSERT INTO RETAIL_DWH.TARGET.D_RETAIL_RGN_T(
+                RGN_ID,
+                CNTRY_KY,
+                RGN_DESC,
+                OPEN_CLOSE_CD,
+                ROW_INSRT_TMS,
+                ROW_UPDT_TMS
+            ) SELECT
+                RGN_ID,
+                CNTRY_KY,
+                RGN_DESC,
+                1,
+                LOCALTIMESTAMP,
+                LOCALTIMESTAMP
+            FROM RETAIL_DWH.TEMP.TMP_REGION
+WHERE RGN_ID NOT IN (SELECT DISTINCT RGN_ID from RETAIL_DWH.TARGET.D_RETAIL_RGN_T )
+2023-01-08 13:40:17.282910: Successfully loaded to target table D_RETAIL_RGN_T
+2023-01-08 13:40:17.535224: query executed: TRUNCATE TABLE RETAIL_DWH.TEMP.TMP_STORE
+2023-01-08 13:40:17.535224: Successfully truncated TEMP.TMP_STORE
+2023-01-08 13:40:17.989915: query executed: INSERT INTO RETAIL_DWH.TEMP.TMP_STORE(
+                    STORE_ID,
+                    RGN_KY,
+                    CNTRY_KY,
+                    STORE_DESC
+                ) SELECT 
+                    ID,
+                    REGN.RGN_KY,
+                    REGN.CNTRY_KY,
+                    STR.STORE_DESC FROM RETAIL_DWH.STAGE.STG_STORE STR
+                    LEFT OUTER JOIN RETAIL_DWH.TARGET.D_RETAIL_RGN_T REGN  on REGN.RGN_ID=STR.REGION_ID
+2023-01-08 13:40:17.990907: Successfully loaded to temp table STORE
+2023-01-08 13:40:18.362219: query executed:  UPDATE RETAIL_DWH.TARGET.D_RETAIL_LOCN_T AS T1
+                                    SET T1.RGN_KY = T2.RGN_KY ,
+                                    T1.CNTRY_KY = T2.CNTRY_KY, 
+                                    T1.LOCN_DESC = T2.STORE_DESC, 
+                                    ROW_UPDT_TMS = LOCALTIMESTAMP 
+                                    FROM RETAIL_DWH.TEMP.TMP_STORE AS T2
+                                    WHERE T1.LOCN_ID = T2.STORE_ID;
+            
+2023-01-08 13:40:18.362219: Successfully loaded to target table D_RETAIL_LOCN_T
+2023-01-08 13:40:18.729104: query executed: INSERT INTO RETAIL_DWH.TARGET.D_RETAIL_LOCN_T(
+                LOCN_ID,
+            RGN_KY,
+            CNTRY_KY,
+            LOCN_DESC,
+            LAST_OPEN_TMS,
+            ACTV_FLG,
+            OPEN_CLOSE_CD,
+            ROW_INSRT_TMS,
+            ROW_UPDT_TMS    
+            ) SELECT
+                STORE_ID,
+                RGN_KY,
+                CNTRY_KY,
+                STORE_DESC,
+                LOCALTIMESTAMP,
+                1,
+                1,
+                LOCALTIMESTAMP,
+                LOCALTIMESTAMP
+            FROM RETAIL_DWH.TEMP.TMP_STORE
+            WHERE STORE_ID NOT IN (SELECT DISTINCT LOCN_ID from RETAIL_DWH.TARGET.D_RETAIL_LOCN_T )
+2023-01-08 13:40:18.729104: Successfully loaded to target table D_RETAIL_LOCN_T
+2023-01-08 13:40:18.729104: Loaded to Store 2023-01-08 13:40:18.729104
+2023-01-08 13:40:18.729104: Loading to Customer 2023-01-08 13:40:18.729104
+2023-01-08 13:40:18.995835: query executed: TRUNCATE TABLE RETAIL_DWH.TEMP.TMP_CUSTOMER
+2023-01-08 13:40:18.995835: Successfully truncated TEMP.TMP_CUSTOMER
+2023-01-08 13:40:19.396363: query executed: INSERT INTO RETAIL_DWH.TEMP.TMP_CUSTOMER(
+                    CUSTOMER_ID,
+                    CUSTOMER_FST_NM,
+                    CUSTOMER_MID_NM,
+                    CUSTOMER_LST_NM,
+                    CUSTOMER_ADDR
+                ) SELECT
+                    ID, 
+                    CUSTOMER_FIRST_NAME,
+                    CUSTOMER_MIDDLE_NAME,
+                    CUSTOMER_LAST_NAME,
+                    CUSTOMER_ADDRESS 
+                FROM RETAIL_DWH.STAGE.STG_CUSTOMER;
+2023-01-08 13:40:19.397365: Successfully loaded to temp table CUSTOMER
+2023-01-08 13:40:19.781262: query executed:  UPDATE RETAIL_DWH.TARGET.D_RETAIL_CUSTOMER_T AS T1
+                                       SET T1.CUSTOMER_FST_NM = T2.CUSTOMER_FST_NM ,
+                                       T1.CUSTOMER_MID_NM = T2.CUSTOMER_MID_NM, 
+                                       T1.CUSTOMER_LST_NM = T2.CUSTOMER_LST_NM,
+                                       T1.CUSTOMER_ADDR = T2.CUSTOMER_ADDR , 
+                                       ROW_UPDT_TMS = LOCALTIMESTAMP 
+                                       FROM RETAIL_DWH.TEMP.TMP_CUSTOMER AS T2
+                                       WHERE T1.CUSTOMER_ID = T2.CUSTOMER_ID;
+               
+2023-01-08 13:40:19.782278: Successfully loaded to target table D_RETAIL_CUSTOMER_T
+2023-01-08 13:40:20.271577: query executed: INSERT INTO RETAIL_DWH.TARGET.D_RETAIL_CUSTOMER_T(
+                CUSTOMER_ID,
+                CUSTOMER_FST_NM,
+                CUSTOMER_MID_NM,
+                CUSTOMER_LST_NM,
+                CUSTOMER_ADDR,
+                OPEN_CLOSE_CD,
+                ROW_INSRT_TMS,
+                ROW_UPDT_TMS  
+            ) SELECT
+                CUSTOMER_ID,
+                CUSTOMER_FST_NM,
+                CUSTOMER_MID_NM,
+                CUSTOMER_LST_NM,
+                CUSTOMER_ADDR,
+                1,
+                LOCALTIMESTAMP,
+                LOCALTIMESTAMP
+            FROM RETAIL_DWH.TEMP.TMP_CUSTOMER
+WHERE CUSTOMER_ID NOT IN (SELECT DISTINCT CUSTOMER_ID from RETAIL_DWH.TARGET.D_RETAIL_CUSTOMER_T )
+2023-01-08 13:40:20.271577: Successfully loaded to target table D_RETAIL_CUSTOMER_T
+2023-01-08 13:40:20.272614: Loaded to Customer 2023-01-08 13:40:20.272614

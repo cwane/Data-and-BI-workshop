@@ -1,0 +1,31 @@
+2023-01-08 12:36:04.168039: Nightly Batch Started
+2023-01-08 12:36:04.168039: Starting the Extraction Process
+2023-01-08 12:36:04.421081: query executed: 
+                    SELECT * FROM RETAIL_DWH.SOURCE.COUNTRY
+            
+2023-01-08 12:36:04.421081: Extracting Product 2023-01-08 12:36:04.421081
+2023-01-08 12:36:05.781148: query executed: copy into @INTERNAL_FILE_STAGE/DATA_CATEGORY from RETAIL_DWH.SOURCE.CATEGORY 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:36:05.781148: sucessfully loaded to internal stage table CATEGORY
+2023-01-08 12:36:06.088009: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_CATEGORY
+2023-01-08 12:36:06.088964: Successfully truncated STAGE.STG_CATEGORY
+2023-01-08 12:36:06.804428: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_CATEGORY from @INTERNAL_FILE_STAGE/DATA_CATEGORY
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:36:06.804428: sucessfully loaded to stage table CATEGORY
+2023-01-08 12:36:07.319711: query executed: copy into @INTERNAL_FILE_STAGE/DATA_SUBCATEGORY from RETAIL_DWH.SOURCE.SUBCATEGORY 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:36:07.319711: sucessfully loaded to internal stage table SUBCATEGORY
+2023-01-08 12:36:07.622651: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_SUBCATEGORY
+2023-01-08 12:36:07.622651: Successfully truncated STAGE.STG_SUBCATEGORY
+2023-01-08 12:36:08.142375: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_SUBCATEGORY from @INTERNAL_FILE_STAGE/DATA_SUBCATEGORY
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:36:08.142375: sucessfully loaded to stage table SUBCATEGORY
+2023-01-08 12:36:08.652208: query executed: copy into @INTERNAL_FILE_STAGE/DATA_PRODUCT from RETAIL_DWH.SOURCE.PRODUCT 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:36:08.652208: sucessfully loaded to internal stage table PRODUCT
+2023-01-08 12:36:08.959361: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_PRODUCT
+2023-01-08 12:36:08.959361: Successfully truncated STAGE.STG_PRODUCT
+2023-01-08 12:36:09.574116: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_PRODUCT from @INTERNAL_FILE_STAGE/DATA_PRODUCT
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:36:09.574116: sucessfully loaded to stage table PRODUCT
+2023-01-08 12:36:09.574116: Extracted Product 2023-01-08 12:36:09.574116

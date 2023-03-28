@@ -1,0 +1,33 @@
+2023-01-08 13:55:45.331746: Nightly Batch Started
+2023-01-08 13:55:45.331746: Starting the Extraction Process
+2023-01-08 13:55:45.581022: query executed: 
+                    SELECT * FROM RETAIL_DWH.SOURCE.COUNTRY
+            
+2023-01-08 13:55:45.581022: Loading to Sales Aggregate 2023-01-08 13:55:45.581022
+2023-01-08 13:55:46.445213: query executed: 
+                UPDATE  RETAIL_DWH.TARGET.F_RETAIL_AGG_SLS_PLC_MONTH_T as TGT
+                SET TGT.TOTAL_QTY = TGT.TOTAL_QTY+TMP_SALES.QTY,
+                TGT.TOTAL_AMT = TGT.TOTAL_AMT+TMP_SALES.AMT,
+                TGT.TOTAL_DSCNT = TGT.TOTAL_DSCNT + TMP_SALES.DSCNT,
+                ROW_UPDT_TMS = LOCALTIMESTAMP
+                FROM RETAIL_DWH.TEMP.TMP_SALES AS TMP_SALES
+                WHERE (TGT.PDT_KY = TMP_SALES.PDT_KY AND TGT.LOCN_KY = TMP_SALES.STORE_KY 
+                AND TGT.MONTH_KY = LEFT(TMP_SALES.DT_KY,LEN(TMP_SALES.DT_KY)-2));
+                                
+2023-01-08 13:55:46.446233: Successfully loaded to target table F_RETAIL_AGG_SLS_PLC_MONTH_T
+2023-01-08 13:55:47.491271: query executed:  INSERT INTO RETAIL_DWH.TARGET.F_RETAIL_AGG_SLS_PLC_MONTH_T (
+        PDT_KY,
+        LOCN_KY,
+        MONTH_KY,
+        TOTAL_QTY,
+        TOTAL_AMT,
+        TOTAL_DSCNT,
+        ROW_INSRT_TMS,
+        ROW_UPDT_TMS) SELECT S.PDT_KY, S.STORE_KY, D.MONTH_KY,
+                        SUM(S.QTY), SUM(AMT), SUM(DSCNT), LOCALTIMESTAMP, LOCALTIMESTAMP FROM RETAIL_DWH.TEMP.TMP_SALES S
+                        INNER JOIN RETAIL_DWH.TARGET.D_RETAIL_TIME_DAY_T D ON D.DAY_KY = S.DT_KY
+                        where  (S.PDT_KY, s.STORE_KY,D.MONTH_KY) not in 
+                        (select distinct  PDT_KY, LOCN_KY,MONTH_KY FROM RETAIL_DWH.TARGET.F_RETAIL_AGG_SLS_PLC_MONTH_T)
+                        GROUP BY 1,2,3;
+2023-01-08 13:55:47.492267: Successfully loaded to target table F_RETAIL_AGG_SLS_PLC_MONTH_T
+2023-01-08 13:55:47.492267: Loaded to Sales Aggregate 2023-01-08 13:55:47.492267

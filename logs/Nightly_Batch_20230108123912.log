@@ -1,0 +1,57 @@
+2023-01-08 12:39:12.989810: Nightly Batch Started
+2023-01-08 12:39:12.989810: Starting the Extraction Process
+2023-01-08 12:39:13.205902: query executed: 
+                    SELECT * FROM RETAIL_DWH.SOURCE.COUNTRY
+            
+2023-01-08 12:39:13.206825: Extracting Product 2023-01-08 12:39:13.206825
+2023-01-08 12:39:14.610491: query executed: copy into @INTERNAL_FILE_STAGE/DATA_CATEGORY from RETAIL_DWH.SOURCE.CATEGORY 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:39:14.610491: sucessfully loaded to internal stage table CATEGORY
+2023-01-08 12:39:14.923665: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_CATEGORY
+2023-01-08 12:39:14.925889: Successfully truncated STAGE.STG_CATEGORY
+2023-01-08 12:39:15.431867: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_CATEGORY from @INTERNAL_FILE_STAGE/DATA_CATEGORY
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:39:15.431867: sucessfully loaded to stage table CATEGORY
+2023-01-08 12:39:15.843576: query executed: copy into @INTERNAL_FILE_STAGE/DATA_SUBCATEGORY from RETAIL_DWH.SOURCE.SUBCATEGORY 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:39:15.843576: sucessfully loaded to internal stage table SUBCATEGORY
+2023-01-08 12:39:16.114366: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_SUBCATEGORY
+2023-01-08 12:39:16.114366: Successfully truncated STAGE.STG_SUBCATEGORY
+2023-01-08 12:39:16.562251: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_SUBCATEGORY from @INTERNAL_FILE_STAGE/DATA_SUBCATEGORY
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:39:16.562251: sucessfully loaded to stage table SUBCATEGORY
+2023-01-08 12:39:16.842378: query executed: copy into @INTERNAL_FILE_STAGE/DATA_PRODUCT from RETAIL_DWH.SOURCE.PRODUCT 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:39:16.842378: sucessfully loaded to internal stage table PRODUCT
+2023-01-08 12:39:17.127221: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_PRODUCT
+2023-01-08 12:39:17.127221: Successfully truncated STAGE.STG_PRODUCT
+2023-01-08 12:39:17.580741: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_PRODUCT from @INTERNAL_FILE_STAGE/DATA_PRODUCT
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:39:17.580741: sucessfully loaded to stage table PRODUCT
+2023-01-08 12:39:17.580741: Extracted Product 2023-01-08 12:39:17.580741
+2023-01-08 12:39:17.580741: Extracting Store 2023-01-08 12:39:17.580741
+2023-01-08 12:39:17.936678: query executed: copy into @INTERNAL_FILE_STAGE/DATA_COUNTRY from RETAIL_DWH.SOURCE.COUNTRY 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:39:17.936678: sucessfully loaded to internal stage table COUNTRY
+2023-01-08 12:39:18.175322: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_COUNTRY
+2023-01-08 12:39:18.175322: Successfully truncated STAGE.STG_COUNTRY
+2023-01-08 12:39:18.713645: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_COUNTRY from @INTERNAL_FILE_STAGE/DATA_COUNTRY
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:39:18.713645: sucessfully loaded to stage table COUNTRY
+2023-01-08 12:39:19.098302: query executed: copy into @INTERNAL_FILE_STAGE/DATA_REGION from RETAIL_DWH.SOURCE.REGION 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:39:19.098302: sucessfully loaded to internal stage table REGION
+2023-01-08 12:39:19.345318: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_REGION
+2023-01-08 12:39:19.345318: Successfully truncated STAGE.STG_REGION
+2023-01-08 12:39:19.809697: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_REGION from @INTERNAL_FILE_STAGE/DATA_REGION
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:39:19.809697: sucessfully loaded to stage table REGION
+2023-01-08 12:39:20.113386: query executed: copy into @INTERNAL_FILE_STAGE/DATA_STORE from RETAIL_DWH.SOURCE.STORE 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:39:20.113386: sucessfully loaded to internal stage table STORE
+2023-01-08 12:39:20.452509: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_STORE
+2023-01-08 12:39:20.452509: Successfully truncated STAGE.STG_STORE
+2023-01-08 12:39:20.932520: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_STORE from @INTERNAL_FILE_STAGE/DATA_STORE
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:39:20.932520: sucessfully loaded to stage table STORE
+2023-01-08 12:39:20.932520: Extracted Store 2023-01-08 12:39:20.932520

@@ -1,0 +1,15 @@
+2023-01-08 12:41:35.200728: Nightly Batch Started
+2023-01-08 12:41:35.200728: Starting the Extraction Process
+2023-01-08 12:41:35.440411: query executed: 
+                    SELECT * FROM RETAIL_DWH.SOURCE.COUNTRY
+            
+2023-01-08 12:41:35.440411: Extracting Sales 2023-01-08 12:41:35.440411
+2023-01-08 12:41:35.926487: query executed: copy into @INTERNAL_FILE_STAGE/DATA_SALES from RETAIL_DWH.SOURCE.SALES 
+                            file_format = (format_name = ETL compression = none) overwrite = True; 
+2023-01-08 12:41:35.926487: sucessfully loaded to internal stage table SALES
+2023-01-08 12:41:36.334724: query executed: TRUNCATE TABLE RETAIL_DWH.STAGE.STG_SALES
+2023-01-08 12:41:36.336786: Successfully truncated STAGE.STG_SALES
+2023-01-08 12:41:36.956251: query executed:  COPY INTO  RETAIL_DWH.STAGE.STG_SALES from @INTERNAL_FILE_STAGE/DATA_SALES
+                                file_format = (format_name = ETL compression = none); 
+2023-01-08 12:41:36.956251: sucessfully loaded to stage table SALES
+2023-01-08 12:41:36.956251: Extracted Sales 2023-01-08 12:41:36.956251

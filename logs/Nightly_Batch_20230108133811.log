@@ -1,0 +1,126 @@
+2023-01-08 13:38:11.235859: Nightly Batch Started
+2023-01-08 13:38:11.235859: Starting the Extraction Process
+2023-01-08 13:38:11.485813: query executed: 
+                    SELECT * FROM RETAIL_DWH.SOURCE.COUNTRY
+            
+2023-01-08 13:38:11.485813: Loading to Product 2023-01-08 13:38:11.485813
+2023-01-08 13:38:11.763554: query executed: TRUNCATE TABLE RETAIL_DWH.TEMP.TMP_CATEGORY
+2023-01-08 13:38:11.763554: Successfully truncated TEMP.TMP_CATEGORY
+2023-01-08 13:38:13.723922: query executed: INSERT INTO RETAIL_DWH.TEMP.TMP_CATEGORY(
+                    CTGRY_ID,
+                    CTGRY_DESC
+                ) SELECT
+                    ID, 
+                    CATEGORY_DESC
+                    FROM RETAIL_DWH.STAGE.STG_CATEGORY
+2023-01-08 13:38:13.725099: Successfully loaded to temp table CATEGORY
+2023-01-08 13:38:14.219346: query executed:  UPDATE RETAIL_DWH.TARGET.D_RETAIL_CTGRY_T AS T1
+                                          SET T1.CTGRY_DESC = T2.CTGRY_DESC,  
+                                          ROW_UPDT_TMS = LOCALTIMESTAMP 
+                                          FROM RETAIL_DWH.TEMP.TMP_CATEGORY AS T2
+                                          WHERE T1.CTGRY_ID = T2.CTGRY_ID;
+                  
+2023-01-08 13:38:14.219346: Successfully loaded to target table D_RETAIL_CTGRY_T
+2023-01-08 13:38:14.617100: query executed: INSERT INTO RETAIL_DWH.TARGET.D_RETAIL_CTGRY_T(
+                CTGRY_ID,
+                CTGRY_DESC,
+                OPEN_CLOSE_CD,
+                ROW_INSRT_TMS,
+                ROW_UPDT_TMS
+            ) SELECT
+                CTGRY_ID,
+                CTGRY_DESC,
+                1,
+                LOCALTIMESTAMP,
+                LOCALTIMESTAMP
+            FROM RETAIL_DWH.TEMP.TMP_CATEGORY
+WHERE CTGRY_ID NOT IN (SELECT DISTINCT CTGRY_ID from RETAIL_DWH.TARGET.D_RETAIL_CTGRY_T )
+2023-01-08 13:38:14.617100: Successfully loaded to target table D_RETAIL_CTGRY_T
+2023-01-08 13:38:14.859930: query executed: TRUNCATE TABLE RETAIL_DWH.TEMP.TMP_SUBCATEGORY
+2023-01-08 13:38:14.859930: Successfully truncated TEMP.TMP_SUBCATEGORY
+2023-01-08 13:38:16.691561: query executed: INSERT INTO RETAIL_DWH.TEMP.TMP_SUBCATEGORY(
+                    SUB_CTGRY_ID,
+                CTGRY_KY,
+                SUB_CTGRY_DESC
+            ) SELECT 
+                ID,
+                CTGRY.CTGRY_KY,
+                SUBCATEGORY_DESC
+            FROM RETAIL_DWH.STAGE.STG_SUBCATEGORY SUBCTGRY
+            LEFT OUTER JOIN RETAIL_DWH.TARGET.D_RETAIL_CTGRY_T CTGRY
+            ON SUBCTGRY.CATEGORY_ID=CTGRY.CTGRY_ID;
+2023-01-08 13:38:16.691561: Successfully loaded to temp table SUBCATEGORY
+2023-01-08 13:38:17.067635: query executed:  UPDATE RETAIL_DWH.TARGET.D_RETAIL_SUB_CTGRY_T AS T1
+                                      SET T1.CTGRY_KY = T2.CTGRY_KY ,
+                                      T1.SUB_CTGRY_DESC = T2.SUB_CTGRY_DESC,  
+                                      ROW_UPDT_TMS = LOCALTIMESTAMP 
+                                      FROM RETAIL_DWH.TEMP.TMP_SUBCATEGORY AS T2
+                                      WHERE T1.SUB_CTGRY_ID = T2.SUB_CTGRY_ID;
+              
+2023-01-08 13:38:17.067635: Successfully loaded to target table D_RETAIL_SUB_CTGRY_T
+2023-01-08 13:38:17.533958: query executed: INSERT INTO RETAIL_DWH.TARGET.D_RETAIL_SUB_CTGRY_T(
+                SUB_CTGRY_ID,
+                CTGRY_KY,
+                SUB_CTGRY_DESC,
+                OPEN_CLOSE_CD,
+                ROW_INSRT_TMS,
+                ROW_UPDT_TMS
+            ) SELECT 
+                SUB_CTGRY_ID,
+                CTGRY_KY,
+                SUB_CTGRY_DESC,
+                1,
+                LOCALTIMESTAMP,
+                LOCALTIMESTAMP
+            FROM RETAIL_DWH.TEMP.TMP_SUBCATEGORY
+WHERE SUB_CTGRY_ID NOT IN (SELECT DISTINCT SUB_CTGRY_ID from RETAIL_DWH.TARGET.D_RETAIL_SUB_CTGRY_T )
+2023-01-08 13:38:17.533958: Successfully loaded to target table D_RETAIL_SUB_CTGRY_T
+2023-01-08 13:38:17.808189: query executed: TRUNCATE TABLE RETAIL_DWH.TEMP.TMP_PRODUCT
+2023-01-08 13:38:17.808189: Successfully truncated TEMP.TMP_PRODUCT
+2023-01-08 13:38:18.301404: query executed: INSERT INTO RETAIL_DWH.TEMP.TMP_PRODUCT(
+                    PDT_ID,
+                    SUB_CTGRY_KY,
+                    CTGRY_KY,
+                    PDT_DESC
+                ) SELECT 
+                    ID,
+                    SUBCTGRY.SUB_CTGRY_KY,
+                    SUBCTGRY.CTGRY_KY,
+                    PRODUCT_DESC
+                    FROM RETAIL_DWH.STAGE.STG_PRODUCT PRDT
+                    LEFT OUTER JOIN RETAIL_DWH.TARGET.D_RETAIL_SUB_CTGRY_T SUBCTGRY
+                    ON SUBCTGRY.SUB_CTGRY_ID=PRDT.SUBCATEGORY_ID;
+2023-01-08 13:38:18.302400: Successfully loaded to temp table PRODUCT
+2023-01-08 13:38:18.695556: query executed:  UPDATE RETAIL_DWH.TARGET.D_RETAIL_PDT_T AS T1
+                                          SET T1.CTGRY_KY = T2.CTGRY_KY ,
+                                          T1.SUB_CTGRY_KY = T2.SUB_CTGRY_KY,
+                                          T1.PDT_DESC = T2.PDT_DESC,  
+                                          ROW_UPDT_TMS = LOCALTIMESTAMP 
+                                          FROM RETAIL_DWH.TEMP.TMP_PRODUCT AS T2
+                                          WHERE T1.PDT_ID = T2.PDT_ID;
+                  
+2023-01-08 13:38:18.695556: Successfully loaded to target table D_RETAIL_PDT_T
+2023-01-08 13:38:19.132957: query executed: INSERT INTO RETAIL_DWH.TARGET.D_RETAIL_PDT_T(
+                PDT_ID,
+            SUB_CTGRY_KY,
+            CTGRY_KY,
+            PDT_DESC,
+            ACTV_FLG,
+            PRICE,
+            OPEN_CLOSE_CD,
+            ROW_INSRT_TMS,
+            ROW_UPDT_TMS
+            ) SELECT
+                PDT_ID,
+                SUB_CTGRY_KY,
+                CTGRY_KY,
+                PDT_DESC,
+                1,
+                null,
+                1,
+                LOCALTIMESTAMP,
+                LOCALTIMESTAMP
+            FROM RETAIL_DWH.TEMP.TMP_PRODUCT
+ WHERE PDT_ID NOT IN (SELECT DISTINCT PDT_ID from RETAIL_DWH.TARGET.D_RETAIL_PDT_T )
+2023-01-08 13:38:19.132957: Successfully loaded to target table D_RETAIL_PDT_T
+2023-01-08 13:38:19.132957: Loaded to Product 2023-01-08 13:38:19.132957
